@@ -23,12 +23,12 @@
     var gauge_two = grid.set(2, 9, 2, 3, contrib.gauge, {label: 'Deployment Progress', percent: 80})
     
     var sparkline = grid.set(10, 10, 2, 2, contrib.sparkline, 
-      { label: 'Throughput (bits/sec)'
+      { label: 'Data integrity'
       , tags: true
       , style: { fg: 'blue', titleFg: 'white' }})
     
     var bar = grid.set(4, 6, 4, 3, contrib.bar, 
-      { label: 'Server Utilization (%)'
+      { label: 'Mainframe Utilization (%)'
       , barWidth: 4
       , barSpacing: 6
       , xOffset: 2
@@ -60,28 +60,28 @@
         { line: randomColor()
         , text: randomColor()
         , baseline: randomColor()}
-      , label: 'Errors Rate'
+      , label: 'Cyberwar Anomaly Detected'
       , maxY: 60
       , showLegend: true })
     
     var transactionsLine = grid.set(0, 0, 6, 6, contrib.line, 
               { showNthLabel: 5
               , maxY: 100
-              , label: 'Total Transactions'
+              , label: 'Infrastructure Online'
               , showLegend: true
               , legend: {width: 10}})
     
-    var map = grid.set(6, 0, 6, 6, contrib.map, {label: 'Servers Location'})
+    var map = grid.set(6, 0, 6, 6, contrib.map, {label: 'Anomaly Detected. Possible Launch.'})
     
     var log = grid.set(8, 6, 4, 2, contrib.log, 
       { fg: randomColor()
       , selectedFg: randomColor()
-      , label: 'Server Log'})
+      , label: 'Message Log'})
     
     
     //dummy data
     var servers = ['US1', 'US2', 'EU1', 'AU1', 'AS1', 'JP1']
-    var commands = ['grep', 'node', 'java', 'timer', '~/ls -l', 'netns', 'watchdog', 'gulp', 'tar -xvf', 'awk', 'npm install']
+    var commands = ['Silo Active', 'Bio Weapon Online', 'Military Base Incident', 'Communication with Unit Lost']
     
     
     //set dummy data on gauge
