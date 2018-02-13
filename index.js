@@ -1,15 +1,31 @@
-   var blessed = require('blessed')
+// Initialization of the dashboard and DB connections.
+	var blessed = require('blessed')
      , contrib = require('blessed-contrib')
      , screen = blessed.screen()
 
-  // Create a random color
-  function randomColor() {
-    return [Math.random() * 255,Math.random()*255, Math.random()*255]
-}
+
+	const sqlite3 = require('sqlite3').verbose();
+	
+// Open SQLite database in memory
+	var db = new sqlite3.Database('./acog.db', sqlite3.OPEN_READWRITE, (err) => {
+  		if (err) {
+    		return console.error(err.message);
+  		}
+  	console.log('Connected to the in-memory SQlite database.');
+	});
+
+
+// Main visualizations
+
+	// Create a random color
+	function randomColor() {
+    	return [Math.random() * 255,Math.random()*255, Math.random()*255]
+	}
  
- 
+// Set up the grid 
     var grid = new contrib.grid({rows: 12, cols: 12, screen: screen})
 
+// Add the donut for progress
     var donut = grid.set(8, 8, 4, 2, contrib.donut, 
       {
       label: 'Readiness to Full Launch',
@@ -19,14 +35,17 @@
       data: [{label: 'Percentage', percent: 0}]
     })
 
+// Make gauges
     var gauge = grid.set(8, 10, 2, 2, contrib.gauge, {label: 'Storage', percent: [80,20]})
     var gauge_two = grid.set(2, 9, 2, 3, contrib.gauge, {label: 'Deployment Progress', percent: 80})
     
+// Add Sparkline graph
     var sparkline = grid.set(10, 10, 2, 2, contrib.sparkline, 
       { label: 'Data integrity'
       , tags: true
       , style: { fg: 'blue', titleFg: 'white' }})
     
+// Add bar graph
     var bar = grid.set(4, 6, 4, 3, contrib.bar, 
       { label: 'Mainframe Utilization (%)'
       , barWidth: 4
@@ -34,6 +53,7 @@
       , xOffset: 2
       , maxHeight: 9})
     
+// Add grid for processes
     var table =  grid.set(4, 9, 4, 3, contrib.table, 
       { keys: true
       , fg: 'green'
@@ -41,7 +61,7 @@
       , columnSpacing: 1
       , columnWidth: [24, 10, 10]})
 
-
+// Add LCD field
     var lcdLineOne = grid.set(0,9,2,3, contrib.lcd,
       {
         label: "LCD Test",
@@ -55,6 +75,7 @@
       }
     );
     
+// Add Error section
     var errorsLine = grid.set(0, 6, 4, 3, contrib.line, 
       { style: 
         { line: randomColor()
@@ -63,22 +84,27 @@
       , label: 'Cyberwar Anomaly Detected'
       , maxY: 60
       , showLegend: true })
-    
+
+
+// Add online logging.
     var transactionsLine = grid.set(0, 0, 6, 6, contrib.line, 
-              { showNthLabel: 5
-              , maxY: 100
-              , label: 'Infrastructure Online'
-              , showLegend: true
-              , legend: {width: 10}})
+    	{ showNthLabel: 5
+        , maxY: 100
+        , label: 'Infrastructure Online'
+        , showLegend: true
+        , legend: {width: 10}})
     
+// Add Anomaly Detection Map
     var map = grid.set(6, 0, 6, 6, contrib.map, {label: 'Anomaly Detected. Possible Launch.'})
-    
+
+// Add Message Log
     var log = grid.set(8, 6, 4, 2, contrib.log, 
       { fg: randomColor()
       , selectedFg: randomColor()
       , label: 'Message Log'})
     
     
+// ALL OF THIS IS CRAPPY DATA FOR NOW
     //dummy data
     var servers = ['US1', 'US2', 'EU1', 'AU1', 'AS1', 'JP1']
     var commands = ['Silo Active', 'Bio Weapon Online', 'Military Base Incident', 'Communication with Unit Lost']
@@ -127,7 +153,7 @@
     
        table.setData({headers: ['Process', 'Cpu (%)', 'Memory'], data: data})
     }
-    
+    // Generate the Table and set it as the scroll focus
     generateTable()
     table.focus()
     setInterval(generateTable, 3000)
@@ -229,6 +255,7 @@
       screen.render()
     }, 1500);
 
+
 //UPDATE METHODS
     var pct = 0.00;
 
@@ -259,9 +286,19 @@
       
       line.setData(mockData)
     }    
-      
-   screen.key(['escape', 'q', 'C-c'], function(ch, key) {
-     return process.exit(0);
-   });
+    
+    // Escape Conditions
+	screen.key(['escape', 'q', 'C-c'], function(ch, key) {
+    
+		// close the database connection
+		db.close((err) => {
+  			if (err) {
+    			return console.error(err.message);
+  			}
+  		console.log('Close the database connection.');
+		});	
+		return process.exit(0);
+	});
  
-   screen.render()
+ 	//Render the screen
+   	screen.render()
