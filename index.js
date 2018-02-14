@@ -189,17 +189,22 @@
     //set map dummy markers
     var marker = true
     setInterval(function() {
-       if (marker) {
-        map.addMarker({"lon" : "-79.0000", "lat" : "37.5000", color: randomColor(), char: 'X' })
-        map.addMarker({"lon" : "-122.6819", "lat" : "45.5200" })
-        map.addMarker({"lon" : "-6.2597", "lat" : "53.3478" })
-        map.addMarker({"lon" : "103.8000", "lat" : "1.3000" })
-       }
-       else {
-        map.clearMarkers()
-       }
-       marker =! marker
-       screen.render()
+    	if (marker) {
+			var sql = 'SELECT latitude lat, longitude lon FROM geolocation where enabled = 1';
+ 			db.all(sql, [], (err, rows) => {
+			if (err) {
+    			throw err;
+  			}
+  			rows.forEach((row) => {
+    			map.addMarker({"lon" :row.lon, "lat" :row.lat, color: "red", char: 'X' })
+  				});
+			});
+		}
+       	else {
+        	map.clearMarkers()
+       	}
+       	marker =! marker
+       	screen.render()
     }, 1000)
     
     //set line charts dummy data
