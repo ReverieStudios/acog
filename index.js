@@ -36,8 +36,8 @@
     })
 
 // Make gauges
-    var gauge = grid.set(8, 10, 2, 2, contrib.gauge, {label: 'Storage', percent: [80,20]})
-    var gauge_two = grid.set(2, 9, 2, 3, contrib.gauge, {label: 'Deployment Progress', percent: 80})
+    var gauge = grid.set(8, 10, 2, 2, contrib.gauge, {label: 'Casualty Rate', percent: [0,100]})
+    var gauge_two = grid.set(2, 9, 2, 3, contrib.gauge, {label: 'Troop Deployment', percent: 0})
     
 // Add Sparkline graph
     var sparkline = grid.set(10, 10, 2, 2, contrib.sparkline, 
@@ -57,14 +57,14 @@
     var table =  grid.set(4, 9, 4, 3, contrib.table, 
       { keys: true
       , fg: 'green'
-      , label: 'Active Processes'
+      , label: 'Active situations'
       , columnSpacing: 1
       , columnWidth: [24, 10, 10]})
 
 // Add LCD field
     var lcdLineOne = grid.set(0,9,2,3, contrib.lcd,
       {
-        label: "LCD Test",
+        label: "Status",
         segmentWidth: 0.06,
         segmentInterval: 0.11,
         strokeWidth: 0.1,
@@ -88,26 +88,30 @@
 
 // Add online logging.
     var transactionsLine = grid.set(0, 0, 6, 6, contrib.line, 
-    	{ showNthLabel: 5
-        , maxY: 100
-        , label: 'Infrastructure Online'
-        , showLegend: true
-        , legend: {width: 10}})
+      { fg: randomColor()
+      , selectedFg: randomColor()
+      , label: 'Message Log'})
+        
+// Add Message Log
+    var log = grid.set(0, 0, 6, 6, contrib.log, 
+      { fg: randomColor()
+      , selectedFg: randomColor()
+      , label: 'Message Log'})
     
 // Add Anomaly Detection Map
     var map = grid.set(6, 0, 6, 6, contrib.map, {label: 'Anomaly Detected. Possible Launch.'})
 
 // Add Message Log
-    var log = grid.set(8, 6, 4, 2, contrib.log, 
+    var statusLog = grid.set(8, 6, 4, 2, contrib.log, 
       { fg: randomColor()
       , selectedFg: randomColor()
-      , label: 'Message Log'})
+      , label: 'Status Log'})
     
     
 // ALL OF THIS IS CRAPPY DATA FOR NOW
     //dummy data
     var servers = ['US1', 'US2', 'EU1', 'AU1', 'AS1', 'JP1']
-    var commands = ['Silo Active', 'Bio Weapon Online', 'Military Base Incident', 'Communication with Unit Lost']
+    var commands = ['Silo Activity Detected', 'Military Casualty', 'CommLoss with Unit', 'Potential Enemy Sighting']
     
     
     //set dummy data on gauge
@@ -115,15 +119,15 @@
     setInterval(function() {
       gauge.setData([gauge_percent, 100-gauge_percent]);
       gauge_percent++;
-      if (gauge_percent>=100) gauge_percent = 0  
-    }, 200)
+      if (gauge_percent>=100) gauge_percent = 11
+    }, 2000)
     
     var gauge_percent_two = 0
     setInterval(function() {
       gauge_two.setData(gauge_percent_two);
       gauge_percent_two++;
-      if (gauge_percent_two>=100) gauge_percent_two = 0  
-    }, 200);
+      if (gauge_percent_two>=100) gauge_percent_two = 100
+    }, 3000);
     
     
     //set dummy data on bar chart
@@ -145,13 +149,13 @@
        for (var i=0; i<30; i++) {
          var row = []          
          row.push(commands[Math.round(Math.random()*(commands.length-1))])
-         row.push(Math.round(Math.random()*5))
-         row.push(Math.round(Math.random()*100))
+         row.push(Math.round(Math.random()*10000))
+         row.push(Math.round(Math.random()*3))
     
          data.push(row)
        }
     
-       table.setData({headers: ['Process', 'Cpu (%)', 'Memory'], data: data})
+       table.setData({headers: ['Message', 'ID', 'Count'], data: data})
     }
     // Generate the Table and set it as the scroll focus
     generateTable()
@@ -161,13 +165,32 @@
     
     //set log dummy data
     setInterval(function() {
-       var rnd = Math.round(Math.random()*2)
-       if (rnd==0) log.log('starting process ' + commands[Math.round(Math.random()*(commands.length-1))])   
-       else if (rnd==1) log.log('terminating server ' + servers[Math.round(Math.random()*(servers.length-1))])
-       else if (rnd==2) log.log('avg. wait time ' + Math.random().toFixed(2))
+    	var sql = 'SELECT text text FROM logs where enabled = 1';
+ 		db.all(sql, [], (err, rows) => {
+		if (err) {
+    		throw err;
+  		}
+  		rows.forEach((row) => {
+    		log.log(row.text);
+			});
+		});
        screen.render()
-    }, 500)
-    
+    }, 5000)
+
+
+    //set status dummy data
+    setInterval(function() {
+    	var sql = 'SELECT text text FROM status where enabled = 1';
+ 		db.all(sql, [], (err, rows) => {
+		if (err) {
+    		throw err;
+  		}
+  		rows.forEach((row) => {
+    		statusLog.log(row.text);
+			});
+		});
+       screen.render()
+    }, 5000)    
     
     //set spark dummy data
     var spark1 = [1,2,5,2,1,5,1,2,5,2,1,5,4,4,5,4,1,5,1,2,5,2,1,5,1,2,5,2,1,5,1,2,5,2,1,5]
@@ -279,7 +302,7 @@
     setInterval(function() {   
        updateDonut();
        screen.render()
-    }, 500)    
+    }, 1000)    
         
     function setLineData(mockData, line) {
       for (var i=0; i<mockData.length; i++) {
