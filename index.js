@@ -94,7 +94,8 @@
         
 // Add Message Log
     var log = grid.set(0, 0, 6, 6, contrib.log, 
-      { fg: randomColor()
+      { fg: 'green'
+      , tags: true
       , selectedFg: randomColor()
       , label: 'Message Log'})
     
@@ -103,7 +104,8 @@
 
 // Add Message Log
     var statusLog = grid.set(8, 6, 4, 2, contrib.log, 
-      { fg: randomColor()
+      { fg: 'red'
+      , tags: true      
       , selectedFg: randomColor()
       , label: 'Status Log'})
     
@@ -118,15 +120,19 @@
     var gauge_percent = 0
     setInterval(function() {
       gauge.setData([gauge_percent, 100-gauge_percent]);
-      gauge_percent++;
-      if (gauge_percent>=100) gauge_percent = 11
+      if (Math.random() > 0.5) {
+      	gauge_percent++;
+      }
+      if (gauge_percent>=100) gauge_percent = 100
     }, 2000)
     
     var gauge_percent_two = 0
     setInterval(function() {
       gauge_two.setData(gauge_percent_two);
-      gauge_percent_two++;
-      if (gauge_percent_two>=100) gauge_percent_two = 100
+      if (Math.random() > 0.5) {
+      	gauge_percent_two++;
+      }
+      if (gauge_percent_two>=67) gauge_percent_two = 67
     }, 3000);
     
     
