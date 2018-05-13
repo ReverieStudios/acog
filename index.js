@@ -107,6 +107,7 @@
       { fg: 'red'
       , tags: true      
       , selectedFg: randomColor()
+      , tags: true
       , label: 'Status Log'})
     
     
@@ -124,7 +125,7 @@
       	gauge_percent++;
       }
       if (gauge_percent>=100) gauge_percent = 100
-    }, 2000)
+    }, 5000)
     
     var gauge_percent_two = 0
     setInterval(function() {
@@ -133,7 +134,7 @@
       	gauge_percent_two++;
       }
       if (gauge_percent_two>=67) gauge_percent_two = 67
-    }, 3000);
+    }, 8000);
     
     
     //set dummy data on bar chart
@@ -253,7 +254,7 @@
     }
     
     var errorsData = {
-       title: 'server 1',
+       title: 'US CYBERCOM',
        x: ['00:00', '00:05', '00:10', '00:15', '00:20', '00:25'],
        y: [30, 50, 70, 40, 50, 20]
     }
@@ -308,7 +309,7 @@
     setInterval(function() {   
        updateDonut();
        screen.render()
-    }, 1000)    
+    }, 10000)    
         
     function setLineData(mockData, line) {
       for (var i=0; i<mockData.length; i++) {
