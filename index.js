@@ -100,7 +100,7 @@
       , label: 'Message Log'})
     
 // Add Anomaly Detection Map
-    var map = grid.set(6, 0, 6, 6, contrib.map, {label: 'Anomaly Detected. Possible Launch.'})
+    var map = grid.set(6, 0, 6, 6, contrib.map, {label: 'Anomaly Detected. Possible Missle Impact.'})
 
 // Add Message Log
     var statusLog = grid.set(8, 6, 4, 2, contrib.log, 
@@ -304,6 +304,15 @@
     var pct = 0.00;
 
     function updateDonut(){
+      var sql = 'SELECT value value FROM gauges where name = "launch"';
+ 	  db.all(sql, [], (err, rows) => {
+	  if (err) {
+          throw err;
+  	  }
+  	  rows.forEach((row) => {
+		  pct = row.value/100.0
+  		  });
+	  });
       if (pct > 0.99) pct = 0.00;
       var color = "green";
       if (pct >= 0.25) color = "cyan";
@@ -312,13 +321,12 @@
       donut.setData([
         {percent: parseFloat((pct+0.00) % 1).toFixed(2), label: 'Percentage', 'color': color}
       ]);
-      pct += 0.01;
     }
         
     setInterval(function() {   
        updateDonut();
        screen.render()
-    }, 10000)    
+    }, 1000)    
         
     function setLineData(mockData, line) {
       for (var i=0; i<mockData.length; i++) {
