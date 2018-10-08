@@ -1,5 +1,26 @@
 # Changelog
 
+## 4.0.2
+
+- Fixed HTTP proxy support by using `request` over `needle` in node-pre-gyp
+
+## 4.0.1
+
+- Node v10 support
+- Upgrade to node-pre-gyp@0.10.1
+- Upgrade to nan@2.10.0
+- Upgrade to sqlite v3.24.0
+- Stopped bundling node-pre-gyp
+- Upgrade to mocha@5
+- Now building electron binaries (@kewde)
+- Add OPEN_FULLMUTEX constant
+
+## 4.0.0
+
+ - Drop support for Node v0.10 and v.12
+ - Upgrade to node-pre-gyp@0.9.0
+ - Upgrade to nan@2.9.2
+
 ## 3.1.13
 
 - Attempt to fix regression of #866
@@ -60,7 +81,7 @@
 
  - Support for node 5.x
  - Upgraded SQLite to 3.9.1: https://www.sqlite.org/releaselog/3_9_1.html
- - Enabled json1 extension by default 
+ - Enabled json1 extension by default
 
 ## 3.1.0
 

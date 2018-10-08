@@ -117,24 +117,33 @@
     var commands = ['Silo Activity Detected', 'Military Casualty', 'CommLoss with Unit', 'Potential Enemy Sighting']
     
     
-    //set dummy data on gauge
+    //Casualty rate
     var gauge_percent = 0
     setInterval(function() {
-      gauge.setData([gauge_percent, 100-gauge_percent]);
-      if (Math.random() > 0.5) {
-      	gauge_percent++;
-      }
-      if (gauge_percent>=100) gauge_percent = 100
-    }, 5000)
+	    var sql = 'SELECT value value FROM gauges where name = "casualties"';
+ 		db.all(sql, [], (err, rows) => {
+		if (err) {
+    		throw err;
+  		}
+  		rows.forEach((row) => {
+    		gauge.setData([row.value, 100-row.value])
+			});
+		});
+    }, 1000)
     
+    // Troop Deployment
     var gauge_percent_two = 0
     setInterval(function() {
-      gauge_two.setData(gauge_percent_two);
-      if (Math.random() > 0.5) {
-      	gauge_percent_two++;
-      }
-      if (gauge_percent_two>=67) gauge_percent_two = 67
-    }, 8000);
+	    var sql = 'SELECT value value FROM gauges where name = "deployment"';
+ 		db.all(sql, [], (err, rows) => {
+		if (err) {
+    		throw err;
+  		}
+  		rows.forEach((row) => {
+            gauge_two.setData(row.value);
+			});
+		});
+    }, 1000);
     
     
     //set dummy data on bar chart
